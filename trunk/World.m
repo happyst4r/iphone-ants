@@ -5,7 +5,7 @@
 - (id) init
 {
     if ((self = [super init])) {
-        tickIntervalM = 0.1; // start with long tick interval
+        tickIntervalM = 0.1f; // start with long tick interval
         objectsM = [[NSMutableArray alloc] init];
     }
 

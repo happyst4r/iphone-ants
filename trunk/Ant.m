@@ -1,5 +1,6 @@
 #import "Ant.h"
-#import "Behaviors.h"
+#import "Behavior.h"
+#import "Vector.h"
 #import <UIKit/UIKit.h>
 
 @implementation Ant
@@ -16,7 +17,7 @@
 {
     [super init];
     posM = pos;
-    velM.x = velM.y = 0;
+    velM.x = velM.y = 0.01f;
     worldM = w;
 
     struct CGRect rect = CGRectMake(0.0f, 0.0f, 48.0f, 48.0f);
@@ -61,12 +62,12 @@
 
     // calculate new position
     if (behaviorM) {
-        GCPoint accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
-        accel = [Vector truncate: accel to: MAX_ACCEL];
+        CGPoint accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
+        accel = [Vector multiply: [Vector truncate: accel to: MAX_ACCEL] by: timeDelta];
         velM = [Vector truncate: [Vector add: accel to: velM] to: MAX_VEL];
     }
 
-    GCPoint posDelta = [Vector multiply: velM by: timeDelta];
+    CGPoint posDelta = [Vector multiply: velM by: timeDelta];
     [self moveByX: posDelta.x Y: posDelta.y];
 }
 
