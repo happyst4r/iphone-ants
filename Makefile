@@ -27,7 +27,7 @@ iapp: dock
 	rm -rf usr
 	rm -rf Library
 
-ants: mainapp.o AntsApp.o Ant.o World.o
+ants: mainapp.o AntsApp.o Ant.o World.o Behaviors.o Vector.o
 	$(LD) $(LDFLAGS) -v -o $@ $^
 
 %.o: %.m

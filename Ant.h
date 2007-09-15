@@ -2,6 +2,7 @@
 #import <UIKit/UIImageView.h>
 
 #import "World.h"
+#import "Behavior.h"
 
 #define MAX_VEL 50
 #define MAX_ACCEL 200
@@ -12,6 +13,7 @@
     CGPoint posM;
     CGPoint velM;
     World * worldM;
+    id <Behavior> behaviorM;
 }
 
 - (id) initWithX: (float)x Y: (float) y world: (World *) w;
