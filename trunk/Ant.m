@@ -5,6 +5,49 @@
 
 #include <math.h>
 
+#define NUM_SPRITES 3
+
+@interface AntSprites : NSObject
+{
+    NSMutableArray *spritesM;
+}
++ (AntSprites *) singleton;
+- (UIImage *) getSpriteAtIndex: (int) i;
+@end
+
+AntSprites *_antSprites;
+
+@implementation AntSprites
++ (AntSprites *) singleton
+{
+    if (!_antSprites) {
+        _antSprites = [[AntSprites alloc] init];
+    }
+    return _antSprites;
+}
+
+- (id) init
+{
+    [super init];
+
+    spritesM = [[NSMutableArray alloc] initWithCapacity: NUM_SPRITES];
+    int i;
+    for(i = 0; i < NUM_SPRITES; i++) {
+        NSString *path = [NSString stringWithFormat:@"/usr/local/bin/ants/ant%d.png", i+1];
+        NSLog(@"Adding image: %@", path);
+        UIImage *img = [[UIImage alloc] initWithContentsOfFile: path];
+        [spritesM addObject: img];
+    }
+
+    return self;
+}
+
+- (UIImage *) getSpriteAtIndex: (int) i
+{
+    return [spritesM objectAtIndex: i];
+}
+@end
+
 @implementation Ant
 - (id) initWithX: (float)x Y: (float)y world: (World *) w
 {
@@ -18,6 +61,8 @@
 - (id) initWithPosition: (CGPoint) pos world: (World *) w
 {
     [super init];
+    travelCounterM = 0.0f;
+    currentSpriteM = 0;
     posM = pos;
     velM.x = velM.y = 0.01f;
     worldM = w;
@@ -27,7 +72,7 @@
     [super initWithContentRect: rect];
     [super orderFront: self];
 
-    viewM = [[UIImageView alloc] initWithImage: [[UIImage alloc] initWithContentsOfFile: @"/usr/local/bin/ants/ant_50_32.png"]];
+    viewM = [[UIImageView alloc] initWithImage: [[AntSprites singleton] getSpriteAtIndex: 0]];
 
     [super setContentView: viewM];
 
@@ -67,6 +112,14 @@
 {
     posM.x += x;
     posM.y += y;
+
+    travelCounterM += (x*x + y*y);
+    if (travelCounterM > 9.0f) {
+        travelCounterM = 0.0f;
+        currentSpriteM = (currentSpriteM + 1) % NUM_SPRITES;
+        [viewM setTransform: CGAffineTransformIdentity];
+        [viewM setImage: [[AntSprites singleton] getSpriteAtIndex: currentSpriteM]];
+    }
 
     [self reposition];
 }
