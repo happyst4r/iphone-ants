@@ -13,6 +13,8 @@
     // this is not true truncation, but is much faster
     if (vec.x > max) vec.x = max;
     if (vec.y > max) vec.y = max;
+    if (vec.y < -max) vec.y = -max;
+    if (vec.x < -max) vec.x = -max;
     return vec;
 }
 
