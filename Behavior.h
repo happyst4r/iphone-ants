@@ -8,3 +8,9 @@
 
 @interface DummyBehavior : NSObject <Behavior>
 @end
+
+@interface WanderBehavior : NSObject <Behavior>
+{
+    CGPoint lastAccelM;
+}
+@end

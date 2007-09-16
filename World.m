@@ -9,6 +9,8 @@
         objectsM = [[NSMutableArray alloc] init];
     }
 
+    urandomM = fopen("/dev/urandom", "r");
+
     return self;
 }
 
@@ -70,6 +72,13 @@
     }
 
     lastTimeM = now;
+}
+
+- (float) randomFloat
+{
+    int r;
+    fread((void *)&r, 4, 1, urandomM);
+    return (float) r / (float) INT_MAX;
 }
 
 @end

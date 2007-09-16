@@ -33,7 +33,7 @@
 
     NSLog(@"yay - ants!");
 
-    behaviorM = [[DummyBehavior alloc] init];
+    behaviorM = [[WanderBehavior alloc] init];
 
     return self;
 }
@@ -61,13 +61,20 @@
     [super orderFront: self]; // bring to front
 
     // calculate new position
+    CGPoint accel;
     if (behaviorM) {
-        CGPoint accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
+        accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
+        NSLog(@"accel virgin: %f, %f", accel.x, accel.y);
         accel = [Vector multiply: [Vector truncate: accel to: MAX_ACCEL] by: timeDelta];
+        NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
         velM = [Vector truncate: [Vector add: accel to: velM] to: MAX_VEL];
     }
 
     CGPoint posDelta = [Vector multiply: velM by: timeDelta];
+    NSLog(@"dt: %f accel: (%f,%f) vel: (%f,%f) posD: (%f,%f) pos: (%f,%f)",
+        timeDelta, accel.x, accel.y, velM.x, velM.y, posDelta.x, posDelta.y,
+        posM.x, posM.y);
+
     [self moveByX: posDelta.x Y: posDelta.y];
 }
 
