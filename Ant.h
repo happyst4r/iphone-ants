@@ -4,7 +4,7 @@
 #import "World.h"
 #import "Behavior.h"
 
-#define MAX_VEL 50
+#define MAX_VEL 30
 #define MAX_ACCEL 200
 
 @interface Ant : UIWindow <Agent>
