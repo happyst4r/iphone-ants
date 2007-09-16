@@ -25,4 +25,14 @@
     return vec;
 }
 
++ (float) lengthSquared: (CGPoint) vec
+{
+    return (vec.x*vec.x + vec.y*vec.y);
+}
+
++ (float) length: (CGPoint) vec
+{
+    return sqrt([Vector lengthSquared: vec]);
+}
+
 @end

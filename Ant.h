@@ -14,6 +14,8 @@
     CGPoint velM;
     World * worldM;
     id <Behavior> behaviorM;
+    float travelCounterM;
+    int currentSpriteM;
 }
 
 - (id) initWithX: (float)x Y: (float) y world: (World *) w;
