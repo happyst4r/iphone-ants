@@ -20,7 +20,7 @@
     velM.x = velM.y = 0.01f;
     worldM = w;
 
-    struct CGRect rect = CGRectMake(0.0f, 0.0f, 48.0f, 48.0f);
+    struct CGRect rect = CGRectMake(0.0f, 0.0f, 16.0f, 16.0f);
     
     [super initWithContentRect: rect];
     [super orderFront: self];
