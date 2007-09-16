@@ -20,5 +20,6 @@
 - (id) initWithPosition: (CGPoint)p world: (World *) w;
 - (id) moveByX: (float)x Y: (float) y;
 - (id) reposition;
+- (float) getRotation;
 
 @end

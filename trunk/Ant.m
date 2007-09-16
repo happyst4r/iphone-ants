@@ -3,6 +3,8 @@
 #import "Vector.h"
 #import <UIKit/UIKit.h>
 
+#include <math.h>
+
 @implementation Ant
 - (id) initWithX: (float)x Y: (float)y world: (World *) w
 {
@@ -20,12 +22,12 @@
     velM.x = velM.y = 0.01f;
     worldM = w;
 
-    struct CGRect rect = CGRectMake(0.0f, 0.0f, 16.0f, 16.0f);
+    struct CGRect rect = CGRectMake(0.0f, 0.0f, 16.0f, 25.0f);
     
     [super initWithContentRect: rect];
     [super orderFront: self];
 
-    viewM = [[UIImageView alloc] initWithImage: [[UIImage alloc] initWithContentsOfFile: @"/usr/local/bin/dock/cancel.png"]];
+    viewM = [[UIImageView alloc] initWithImage: [[UIImage alloc] initWithContentsOfFile: @"/usr/local/bin/ants/ant_50_32.png"]];
 
     [super setContentView: viewM];
 
@@ -46,6 +48,19 @@
 - (id) reposition
 {
     [super setTransform: CGAffineTransformMakeTranslation(posM.x, posM.y)];
+    [viewM setTransform: CGAffineTransformMakeRotation([self getRotation])];
+}
+
+- (float) getRotation
+{
+    // calc rotation based on vel
+    float baseAngle = atan(velM.y/velM.x);
+
+    while(baseAngle < 0) baseAngle += 2*M_PI;
+
+    NSLog(@"angle: %f", baseAngle/M_PI*180);
+
+    return baseAngle + M_PI/2 + (velM.x < 0?M_PI:0);
 }
 
 - (id) moveByX: (float)x Y:(float)y
@@ -64,9 +79,9 @@
     CGPoint accel;
     if (behaviorM) {
         accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
-        NSLog(@"accel virgin: %f, %f", accel.x, accel.y);
+        //NSLog(@"accel virgin: %f, %f", accel.x, accel.y);
         accel = [Vector multiply: [Vector truncate: accel to: MAX_ACCEL] by: timeDelta];
-        NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
+        //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
         velM = [Vector truncate: [Vector add: accel to: velM] to: MAX_VEL];
     }
 
