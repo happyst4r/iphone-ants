@@ -15,7 +15,7 @@
 }
 @end
 
-@interface FleeBehavior: NSObject <Behavior>
+@interface FleeBehavior: WanderBehavior
 {
     CGPoint fromM;
 }

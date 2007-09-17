@@ -2,10 +2,20 @@
 #import "Ant.h"
 #import "Vector.h"
 
-#define SPAWN_NEW_ANTS_PROBABILITY 0.5f
-#define MAX_ANTS 5
+#define SPAWN_NEW_ANTS_PROBABILITY 0.9f
+#define MAX_ANTS 8
+
+World *_world;
 
 @implementation World
+
++ (World *) singleton
+{
+    if (!_world) {
+        _world = [[World alloc] init];
+    }
+    return _world;
+}
 
 - (id) init
 {
@@ -22,6 +32,17 @@
 
     return self;
 }
+
+- (id) updateAccelerometerInX: (float)x Y: (float)y Z: (float)z
+{
+    accelX = x;
+    accelY = y;
+    accelZ = z;
+}
+
+- (float) accelX { return accelX; }
+- (float) accelY { return accelY; }
+- (float) accelZ { return accelZ; }
 
 - (id) dealloc
 {
@@ -58,6 +79,7 @@
 {
     if (timerM) {
         [timerM invalidate];
+        timerM = nil;
     }
 }
 
@@ -67,20 +89,24 @@
     [self start];
 }
 
-- (id) adjustTimer
+- (BOOL) adjustTimer
 {
     if ([objectsM count] == 0) {
         if (tickIntervalM != 5.0f) {
             tickIntervalM = 5.0f;
             [self restart];
+            return YES;
         }
     } else {
         // we have objects, increase timer
         if (tickIntervalM != 0.1f) {
             tickIntervalM = 0.1f;
             [self restart];
+            return YES;
         }
     }
+
+    return NO;
 }
 
 - (id) tick: (NSTimer *)timer
@@ -98,10 +124,18 @@
             int i;
             for (i = 0; i < cnt; i++) {
                 CGPoint vel;
-                vel.x = vel.y = 0.01f;
                 CGPoint pos;
-                pos.x = 150.0f;
-                pos.y = 240.0f;
+                CGPoint center;
+                center.x = 160.0f;
+                center.y = 240.0f;
+                // random position outside our screen
+                pos.x = ([self randomFloat] - 1.0f) * 15.0f + ([self randomFloat]>0.0f?360.0f:0.0f);
+                if (pos.x > 350.0f) pos.x = 350.0f;
+                pos.y = ([self randomFloat] + 1.0f) * 260.0f - 20.0f;
+                //pos.y = ([self randomFloat] - 1.0f) * 15.0f + ([self randomFloat]>0.0f?520.0f:0.0f);
+                //if (pos.y > 510.0f) pos.y = 510.0f;
+                vel = [Vector subtract: pos from: center];
+                //NSLog(@"spawn at: (%f,%f) vel: (%f,%f)", pos.x, pos.y, vel.x, vel.y);
                 Ant *ant = [[Ant alloc] initWithPosition: pos velocity: vel world: self];
                 [ant setBehavior: [[[WanderBehavior alloc] init] autorelease]];
                 [self addObject: ant];
@@ -111,6 +145,8 @@
 
     if (lastTimeM) {
         NSTimeInterval timeDelta = [now timeIntervalSinceDate: lastTimeM];
+        // throttle timeDelta to 0.2
+        if (timeDelta > 0.2f) timeDelta = 0.2f;
         // loop thru our objects, tick them
         int cnt = [objectsM count];
         int i;
@@ -118,7 +154,12 @@
             id <Agent> object = [objectsM objectAtIndex: i];
             [object tickWithTimeDelta: timeDelta];
             // out of bounds?
-            // TODO
+            CGPoint pos = [object position];
+            if (pos.x < -60.0f || pos.y < -60.0f || pos.x > 380.0f || pos.y > 540.0f) {
+                // kill the ant!
+                //NSLog(@"killing: %d", i);
+                [object removeFromWorld];
+            }
         }
 
         // remove all the objects in our remove list
@@ -140,15 +181,13 @@
 
 - (id) registerTapAt: (CGPoint) pos
 {
-    NSLog(@"Tap at %f, %f", pos.x, pos.y);
+    //NSLog(@"Tap at %f, %f", pos.x, pos.y);
     // anybody nearby?
     int i, cnt = [objectsM count];
     for(i = 0; i < cnt; i++) {
         NSObject <Agent> *agent = [objectsM objectAtIndex: i];
         CGPoint diffVector = [Vector subtract: [agent position] from: pos];
-        NSLog(@"Agent %d is this far away: %f", i, [Vector lengthSquared: diffVector]);
-        if ([Vector lengthSquared: diffVector] < 2500.0f) {
-            NSLog(@"got one");
+        if ([Vector lengthSquared: diffVector] < 10000.0f) {
             [agent setBehavior: [[[FleeBehavior alloc] initWithPoint: pos] autorelease]];
             [agent setMaxVelocity: 60.0f];
         }
@@ -158,7 +197,7 @@
 - (float) randomFloat
 {
     int r;
-    fread((void *)&r, 4, 1, urandomM);
+    fread((void *)&r, sizeof(int), 1, urandomM);
     return (float) r / (float) INT_MAX;
 }
 

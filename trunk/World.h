@@ -7,6 +7,7 @@
 - (id) tickWithTimeDelta: (NSTimeInterval) timeDelta;
 - (CGPoint) position;
 - (CGPoint) velocity;
+- (id) removeFromWorld;
 - (id) setBehavior: (NSObject <Behavior> *) behavior;
 - (id) setMaxVelocity: (float) v;
 @end
@@ -23,10 +24,11 @@
     float accelY;
     float accelZ;
 }
++ (World *) singleton;
 - (id) addObject: (id <Agent>) obj;
 - (id) removeObject: (id <Agent>) obj;
 - (id) tick:(NSTimer*)timer;
-- (id) adjustTimer;
+- (BOOL) adjustTimer;
 - (id) start;
 - (id) pause;
 - (id) restart;

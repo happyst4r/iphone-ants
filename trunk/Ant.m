@@ -9,6 +9,7 @@
 
 enum {
     kAntAlive,
+    kAntFalling,
     kAntDead
 };
 
@@ -88,8 +89,6 @@ AntSprites *_antSprites;
 
     //NSLog(@"yay - ants!");
 
-    behaviorM = [[WanderBehavior alloc] init];
-
     return self;
 }
 
@@ -167,9 +166,68 @@ AntSprites *_antSprites;
     [worldM registerTapAt: posM];
 }
 
+- (id) removeFromWorld
+{
+    [worldM removeObject: self];
+    [self orderOut: self];
+    [self release];
+}
+
 - (id) tickWithTimeDelta: (NSTimeInterval)timeDelta
 {
     [super orderFront: self]; // bring to front
+    
+    float x = [worldM accelX];
+    float y = [worldM accelY];
+    float z = [worldM accelZ];
+
+    // do we need to react to the accelerometer?
+    if (stateM == kAntFalling) {
+        // we're faaaalllllliinnnngggg. fun
+
+        // are we going to get back on our feet?
+        if (abs(x) < 0.25f && abs(y) < 0.25f && z < -0.25f) {
+            // ok, now we have a chance of re-attaching
+            if ([worldM randomFloat] < 0.0f) {
+                stateM = kAntAlive;
+            }
+
+            fallingVelM.x = fallingVelM.y = 0.0f;
+        } else if (z < 0.4) {
+            // ok keep falling
+            // but are we upside down?
+            CGPoint accel = [Vector
+                multiply: [Vector makeWithX: -x Y: -y] // down
+                by: 400.0f];
+
+            // are we stuck?
+            // subtract friction from the screen
+            if (z > 0.0f) {
+                accel = [Vector multiply: [Vector subtract: fallingVelM from: accel] by: z*2];
+            }
+
+            // compute new vel and apply
+            accel = [Vector multiply: accel by: timeDelta];
+            //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
+            fallingVelM = [Vector truncate: [Vector add: accel to: fallingVelM] to: 200.0f];
+
+            CGPoint posDelta = [Vector multiply: fallingVelM by: timeDelta];
+
+            [self moveByX: posDelta.x Y: posDelta.y];
+        }
+    } else {
+        // now are we going to let go?
+        float ax = abs(x), ay = abs(y);
+        if (ax > 0.35 || ay > 0.35) {
+            float max = ax>ay?ax:ay;
+
+            if ([worldM randomFloat] / 2 + 0.5f < max*max) {
+                // yup
+                stateM = kAntFalling;
+            }
+        }
+    }
+
 
     // if alive, move
     if (stateM == kAntAlive) {
@@ -196,9 +254,7 @@ AntSprites *_antSprites;
         if (deathCounterM > 3.0f) {
             if (deathCounterM > 4.0f) {
                 // remove from world, dealloc
-                [worldM removeObject: self];
-                [self orderOut: self];
-                [self release];
+                [self removeFromWorld];
                 return;
             }
             [viewM setAlpha: 4.0f - deathCounterM];
