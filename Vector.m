@@ -1,6 +1,14 @@
 #import "Vector.h"
 
 @implementation Vector
++ (CGPoint) makeWithX: (float)x Y: (float)y
+{
+    CGPoint vec;
+    vec.x = x;
+    vec.y = y;
+    return vec;
+}
+
 + (CGPoint) add: (CGPoint) vec1 to: (CGPoint) vec2
 {
     vec2.x += vec1.x;

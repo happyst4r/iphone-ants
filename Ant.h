@@ -4,13 +4,14 @@
 #import "World.h"
 #import "Behavior.h"
 
-#define MAX_ACCEL 200
+#define MAX_ACCEL 500
 
 @interface Ant : UIWindow <Agent>
 {
     UIImageView  * viewM;
     CGPoint posM;
     CGPoint velM;
+    CGPoint fallingVelM;
     World * worldM;
     NSObject <Behavior> *behaviorM;
     float travelCounterM;

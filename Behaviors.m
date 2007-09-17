@@ -42,13 +42,21 @@
 @implementation FleeBehavior
 - (id) initWithPoint: (CGPoint) pos
 {
+    [super init];
     fromM = pos;
     return self;
 }
 
 - (CGPoint) getAccelerationVectorForAgent: (id <Agent>) agent world: (World *) w
 {
-    CGPoint desired = [Vector subtract: fromM from: [agent position]];
+    CGPoint wander = [Vector multiply: [super getAccelerationVectorForAgent: agent world: w] by: 0.5f];
+    CGPoint desired = [Vector 
+        multiply: [Vector
+            add: wander
+            to: [Vector 
+                subtract: fromM 
+                from: [agent position]]]
+        by: 1000.0f];
     return [Vector subtract: [agent velocity] from: desired];
 }
 
