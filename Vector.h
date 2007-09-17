@@ -7,4 +7,6 @@
 + (CGPoint) multiply: (CGPoint) vec by: (float) factor;
 + (float) lengthSquared: (CGPoint) vec;
 + (float) length: (CGPoint) vec;
++ (CGPoint) subtract: (CGPoint) vec from: (CGPoint) vec;
++ (CGPoint) invert: (CGPoint) vec;
 @end

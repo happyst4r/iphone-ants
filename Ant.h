@@ -4,7 +4,6 @@
 #import "World.h"
 #import "Behavior.h"
 
-#define MAX_VEL 30
 #define MAX_ACCEL 200
 
 @interface Ant : UIWindow <Agent>
@@ -13,15 +12,15 @@
     CGPoint posM;
     CGPoint velM;
     World * worldM;
-    id <Behavior> behaviorM;
+    NSObject <Behavior> *behaviorM;
     float travelCounterM;
     int currentSpriteM;
     int stateM;
     float deathCounterM;
+    float maxVelocityM;
 }
 
-- (id) initWithX: (float)x Y: (float) y world: (World *) w;
-- (id) initWithPosition: (CGPoint)p world: (World *) w;
+- (id) initWithPosition: (CGPoint)p velocity: (CGPoint)v world: (World *) w;
 - (id) moveByX: (float)x Y: (float) y;
 - (id) reposition;
 - (float) getRotation;

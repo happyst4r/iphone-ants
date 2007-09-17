@@ -38,3 +38,18 @@
     return lastAccelM;
 }
 @end
+
+@implementation FleeBehavior
+- (id) initWithPoint: (CGPoint) pos
+{
+    fromM = pos;
+    return self;
+}
+
+- (CGPoint) getAccelerationVectorForAgent: (id <Agent>) agent world: (World *) w
+{
+    CGPoint desired = [Vector subtract: fromM from: [agent position]];
+    return [Vector subtract: [agent velocity] from: desired];
+}
+
+@end
