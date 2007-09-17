@@ -17,7 +17,7 @@
 			<true/>
 		</dict>
         <dict>
-            <key>desetination</key>
+            <key>destination</key>
             <string>/usr/local/share/ants</string>
             <key>source</key>
             <string>share</string>
@@ -41,7 +41,7 @@
 		</array>
 	</array>
 	<key>RDPxlPackageDesc</key>
-	<string>An addition to the iPhone UI.  Drag from the bottom-right corner sunburst to switch between all of your apps.</string>
+	<string>A "game" where ants crawl around on your screen. You can squish them, shake the screen to make them fall off or slide on the glass (try upside down!). They react to you. Have fun.</string>
 	<key>RDPxlPackageURL</key>
 	<string>http://iphone-ants.googlecode.com/</string>
 	<key>RDPxlPackageFormat</key>
@@ -51,7 +51,7 @@
 	<key>RDPxlPackageName</key>
 	<string>Dock</string>
 	<key>RDPxlPackageVersion</key>
-	<string>2.06</string>
+	<string>1.0.1</string>
 	<key>RDPxlPackagerName</key>
 	<string>tzun</string>
 	<key>RDPxlPackagerContact</key>
