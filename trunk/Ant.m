@@ -63,25 +63,17 @@ AntSprites *_antSprites;
 @end
 
 @implementation Ant
-- (id) initWithX: (float)x Y: (float)y world: (World *) w
-{
-    CGPoint pos;
-    pos.x = x;
-    pos.y = y;
-
-    return [self initWithPosition: pos world: w];
-}
-
-- (id) initWithPosition: (CGPoint) pos world: (World *) w
+- (id) initWithPosition: (CGPoint) pos velocity: (CGPoint) vel world: (World *) w
 {
     [super init];
     travelCounterM = 0.0f;
     currentSpriteM = 0;
     posM = pos;
-    velM.x = velM.y = 0.01f;
     worldM = w;
     stateM = kAntAlive;
+    maxVelocityM = 30.0f;
     deathCounterM = 0.0f;
+    velM = [Vector truncate: vel to: maxVelocityM];
 
     struct CGRect rect = CGRectMake(0.0f, 0.0f, 16.0f, 25.0f);
     
@@ -112,6 +104,11 @@ AntSprites *_antSprites;
     return posM;
 }
 
+- (CGPoint) velocity
+{
+    return velM;
+}
+
 - (id) reposition
 {
     [super setTransform: CGAffineTransformMakeTranslation(posM.x, posM.y)];
@@ -128,6 +125,14 @@ AntSprites *_antSprites;
     //NSLog(@"angle: %f", baseAngle/M_PI*180);
 
     return baseAngle + M_PI/2 + (velM.x < 0?M_PI:0);
+}
+
+- (id) setBehavior: (NSObject <Behavior> *) newBehavior
+{
+    if (newBehavior != behaviorM) {
+        [behaviorM release];
+        behaviorM = [newBehavior retain];
+    }
 }
 
 - (id) moveByX: (float)x Y:(float)y
@@ -158,6 +163,8 @@ AntSprites *_antSprites;
     [viewM setTransform: CGAffineTransformIdentity];
     [viewM setImage: [[AntSprites singleton] deadAntSprite]];
     [self reposition]; // re-rotate and such
+    // tell the world we just got tapped
+    [worldM registerTapAt: posM];
 }
 
 - (id) tickWithTimeDelta: (NSTimeInterval)timeDelta
@@ -173,7 +180,7 @@ AntSprites *_antSprites;
             //NSLog(@"accel virgin: %f, %f", accel.x, accel.y);
             accel = [Vector multiply: [Vector truncate: accel to: MAX_ACCEL] by: timeDelta];
             //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
-            velM = [Vector truncate: [Vector add: accel to: velM] to: MAX_VEL];
+            velM = [Vector truncate: [Vector add: accel to: velM] to: maxVelocityM];
         }
 
         CGPoint posDelta = [Vector multiply: velM by: timeDelta];
@@ -197,6 +204,11 @@ AntSprites *_antSprites;
             [viewM setAlpha: 4.0f - deathCounterM];
         }
     }
+}
+
+- (id) setMaxVelocity: (float) max
+{
+    maxVelocityM = max;
 }
 
 @end

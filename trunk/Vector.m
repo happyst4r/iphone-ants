@@ -35,4 +35,19 @@
     return sqrt([Vector lengthSquared: vec]);
 }
 
++ (CGPoint) invert: (CGPoint) vec
+{
+    vec.x *= -1;
+    vec.y *= -1;
+    return vec;
+}
+
++ (CGPoint) subtract: (CGPoint) vec1 from: (CGPoint) vec2
+{
+    vec2.x -= vec1.x;
+    vec2.y -= vec1.y;
+
+    return vec2;
+}
+
 @end

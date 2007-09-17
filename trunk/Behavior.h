@@ -14,3 +14,10 @@
     CGPoint lastAccelM;
 }
 @end
+
+@interface FleeBehavior: NSObject <Behavior>
+{
+    CGPoint fromM;
+}
+- (id) initWithPoint: (CGPoint) pos;
+@end

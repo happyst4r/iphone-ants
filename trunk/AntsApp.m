@@ -20,11 +20,6 @@ int springboard_pid();
 {
     worldM = [[World alloc] init];
 
-    int i;
-    for(i = 0; i < 20; i++) {
-        [worldM addObject: [[Ant alloc] initWithX: 150.0f Y: 240.0f world: worldM]];
-    }
-
     //NSLog(@"starting world");
     [worldM start];
 
