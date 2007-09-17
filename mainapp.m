@@ -81,13 +81,13 @@ int springboard_restart()
 
 int main(int argc, char **argv)
 {
-/*	tryagain:
+	tryagain:
      //We want to wait until Springboard has run, before we should open up
      sleep(1);
      while (springboard_pid() == -1)
 		sleep(10);
 	 sleep(5);
-	 if (springboard_pid() == -1) goto tryagain; */
+	 if (springboard_pid() == -1) goto tryagain;
      NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
      return UIApplicationMain(argc, argv, [AntsApp class]);
 } 

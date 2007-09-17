@@ -29,17 +29,23 @@ int springboard_pid();
 - (void) applicationWillSuspend
 {
     [worldM pause];
-    NSLog(@"pausing");
+    NSLog(@"pausing: suspend");
+}
+
+- (void) applicationWillTerminate
+{
+    [worldM pause];
+    NSLog(@"pausing: terminate");
 }
 
 - (void) willSleep {
 	[worldM pause];
-    NSLog(@"pausing");
+    NSLog(@"pausing: sleep");
 }
 
 - (void) didWake {
 	[worldM start];
-    NSLog(@"starting");
+    NSLog(@"starting: wake");
 }
 
 @end
