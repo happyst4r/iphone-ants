@@ -1,0 +1,11 @@
+#summary How to install Ants
+
+I'll put it in AppTapp installer and PXL soon. For now, download the .tar.gz, transfer it to your iPhone and execute:
+
+{{{
+# cd /
+# tar --no-same-owner -z -v -x -f /path/to/ants1.0.tar.gz
+}}}
+
+ 
+ 
