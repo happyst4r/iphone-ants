@@ -9,6 +9,8 @@
     return vec;
 }
 
++ (CGPoint) makeIdentity { return [self makeWithX: 0.0f Y: 0.0f]; }
+
 + (CGPoint) add: (CGPoint) vec1 to: (CGPoint) vec2
 {
     vec2.x += vec1.x;

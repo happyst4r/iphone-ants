@@ -193,7 +193,7 @@ AntSprites *_antSprites;
             }
 
             fallingVelM.x = fallingVelM.y = 0.0f;
-        } else if (z < 0.4) {
+        } else if (z < 0.40) {
             // ok keep falling
             // but are we upside down?
             CGPoint accel = [Vector
@@ -214,7 +214,15 @@ AntSprites *_antSprites;
             CGPoint posDelta = [Vector multiply: fallingVelM by: timeDelta];
 
             [self moveByX: posDelta.x Y: posDelta.y];
+        } else {
+            fallingVelM.x = fallingVelM.y = 0;
         }
+        
+        // flail!
+        currentSpriteM = (currentSpriteM + 1) % NUM_SPRITES;
+        [viewM setTransform: CGAffineTransformIdentity];
+        [viewM setImage: [[AntSprites singleton] spriteAtIndex: currentSpriteM]];
+        [self reposition];
     } else {
         // now are we going to let go?
         float ax = abs(x), ay = abs(y);
@@ -229,18 +237,18 @@ AntSprites *_antSprites;
     }
 
 
+    // calculate new position
+    CGPoint accel = [Vector makeIdentity];
+    if (behaviorM) {
+        accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
+        //NSLog(@"accel virgin: %f, %f", accel.x, accel.y);
+        accel = [Vector multiply: [Vector truncate: accel to: MAX_ACCEL] by: timeDelta];
+        //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
+        velM = [Vector truncate: [Vector add: accel to: velM] to: maxVelocityM];
+    }
+
     // if alive, move
     if (stateM == kAntAlive) {
-        // calculate new position
-        CGPoint accel;
-        if (behaviorM) {
-            accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
-            //NSLog(@"accel virgin: %f, %f", accel.x, accel.y);
-            accel = [Vector multiply: [Vector truncate: accel to: MAX_ACCEL] by: timeDelta];
-            //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
-            velM = [Vector truncate: [Vector add: accel to: velM] to: maxVelocityM];
-        }
-
         CGPoint posDelta = [Vector multiply: velM by: timeDelta];
         //NSLog(@"dt: %f accel: (%f,%f) vel: (%f,%f) posD: (%f,%f) pos: (%f,%f)",
             //timeDelta, accel.x, accel.y, velM.x, velM.y, posDelta.x, posDelta.y,
