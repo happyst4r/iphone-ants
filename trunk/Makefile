@@ -7,23 +7,17 @@ default: ants
 #all: dock pxl iapp
 all: ants
 
-pxl: dock
-	mkdir bin
-	cp dock sunny.png camera.png cancel.png blacky.png dockicon.png bin
-	mkdir launchdaemons
-	cp com.natetrue.dock.plist launchdaemons
-	rm -f Dock.pxl
-	zip -r Dock.pxl PxlPkg.plist bin launchdaemons
-	rm -rf bin
-	rm -rf launchdaemons
-	
-iapp: dock
-	mkdir -p usr/local/bin/dock
+archives: ants
+	mkdir -p usr/local/bin
+	mkdir -p usr/local/share/ants
 	mkdir -p Library/LaunchDaemons
-	cp dock sunny.png camera.png cancel.png blacky.png usr/local/bin/dock/
-	cp com.natetrue.dock.plist Library/LaunchDaemons/
-	rm -f Dock.zip
-	zip -r Dock.zip usr Library
+	cp ants usr/local/bin/
+	cp net.schine.ants.plist Library/LaunchDaemons/
+	cp ant_sprites/*.png usr/local/share/ants/
+	rm -f Ants.zip
+	rm -f ants.tar.gz
+	zip -r Ants.zip usr Library
+	tar zcf ants.tar.gz usr Library
 	rm -rf usr
 	rm -rf Library
 
