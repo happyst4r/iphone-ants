@@ -41,13 +41,13 @@ AntSprites *_antSprites;
     spritesM = [[NSMutableArray alloc] initWithCapacity: NUM_SPRITES];
     int i;
     for(i = 0; i < NUM_SPRITES; i++) {
-        NSString *path = [NSString stringWithFormat:@"/usr/local/bin/ants/ant%d.png", i+1];
+        NSString *path = [NSString stringWithFormat:@"/usr/local/share/ants/ant%d.png", i+1];
         //NSLog(@"Adding image: %@", path);
         UIImage *img = [[UIImage alloc] initWithContentsOfFile: path];
         [spritesM addObject: img];
     }
 
-    deadAntImageM = [[UIImage alloc] initWithContentsOfFile: @"/usr/local/bin/ants/ant_dead.png"];
+    deadAntImageM = [[UIImage alloc] initWithContentsOfFile: @"/usr/local/share/ants/ant_dead.png"];
 
     return self;
 }
