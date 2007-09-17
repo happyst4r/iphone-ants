@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>net.schine.ants</string>
+	<key>RDPxlPackageFiles</key>
+	<array>
+		<dict>
+			<key>destination</key>
+			<string>/usr/local/bin</string>
+			<key>source</key>
+			<string>bin</string>
+			<key>executable</key>
+			<true/>
+			<key>overwrite</key>
+			<true/>
+		</dict>
+        <dict>
+            <key>desetination</key>
+            <string>/usr/local/share/ants</string>
+            <key>source</key>
+            <string>share</string>
+            <key>overwrite</key>
+            <true/>
+		<dict>
+			<key>destination</key>
+			<string>/Library/LaunchDaemons</string>
+			<key>source</key>
+			<string>launchdaemons</string>
+			<key>overwrite</key>
+			<true/>
+		</dict>
+	</array>
+	<key>RDPxlPackagePostflight</key>
+	<array>
+		<array>
+		    <string>/bin/launchctl</string>
+		    <string>load</string>
+		    <string>/Library/LaunchDaemons/net.schine.ants.plist</string>		    
+		</array>
+	</array>
+	<key>RDPxlPackageDesc</key>
+	<string>An addition to the iPhone UI.  Drag from the bottom-right corner sunburst to switch between all of your apps.</string>
+	<key>RDPxlPackageURL</key>
+	<string>http://iphone-ants.googlecode.com/</string>
+	<key>RDPxlPackageFormat</key>
+	<integer>1</integer>
+	<key>RDPxlPackageIcon</key>
+	<string>bin/dockicon.png</string>
+	<key>RDPxlPackageName</key>
+	<string>Dock</string>
+	<key>RDPxlPackageVersion</key>
+	<string>2.06</string>
+	<key>RDPxlPackagerName</key>
+	<string>tzun</string>
+	<key>RDPxlPackagerContact</key>
+	<string>gabe@schine.net</string>
+</dict>
+</plist>
