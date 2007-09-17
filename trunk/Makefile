@@ -17,7 +17,7 @@ archives: ants
 	rm -f Ants.zip
 	rm -f ants.tar.gz
 	zip -r Ants.zip usr Library
-	tar --no-same-permissions -z -c -f ants.tar.gz usr Library
+	tar -z -c -f ants.tar.gz usr Library
 	rm -rf usr
 	rm -rf Library
 
