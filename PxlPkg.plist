@@ -23,6 +23,7 @@
             <string>share</string>
             <key>overwrite</key>
             <true/>
+        </dict>
 		<dict>
 			<key>destination</key>
 			<string>/Library/LaunchDaemons</string>
