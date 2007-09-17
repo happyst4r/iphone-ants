@@ -23,6 +23,8 @@
     float accelX;
     float accelY;
     float accelZ;
+    int noAccelCountM;
+    BOOL gotAccelM;
 }
 + (World *) singleton;
 - (id) addObject: (id <Agent>) obj;

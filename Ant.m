@@ -188,12 +188,13 @@ AntSprites *_antSprites;
         // are we going to get back on our feet?
         if (abs(x) < 0.25f && abs(y) < 0.25f && z < -0.25f) {
             // ok, now we have a chance of re-attaching
-            if ([worldM randomFloat] < 0.0f) {
+            if (z < -0.40f || ([worldM randomFloat] / 2 + 0.5) < 0.4f * timeDelta) {
                 stateM = kAntAlive;
+                fallingVelM.x = fallingVelM.y = 0.0f;
             }
-
-            fallingVelM.x = fallingVelM.y = 0.0f;
-        } else if (z < 0.40) {
+        } 
+        
+        if (z < 0.42) {
             // ok keep falling
             // but are we upside down?
             CGPoint accel = [Vector
@@ -232,6 +233,7 @@ AntSprites *_antSprites;
             if ([worldM randomFloat] / 2 + 0.5f < max*max) {
                 // yup
                 stateM = kAntFalling;
+                fallingVelM = velM; // preservation of motion
             }
         }
     }
