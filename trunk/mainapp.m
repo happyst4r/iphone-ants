@@ -81,7 +81,6 @@ int springboard_restart()
 
 int main(int argc, char **argv)
 {
-    printf("Going to try shit\n");
 /*	tryagain:
      //We want to wait until Springboard has run, before we should open up
      sleep(1);

@@ -7,6 +7,7 @@
     if ((self = [super init])) {
         tickIntervalM = 0.1f; // start with long tick interval
         objectsM = [[NSMutableArray alloc] init];
+        removeListM = [[NSMutableArray alloc] init];
     }
 
     urandomM = fopen("/dev/urandom", "r");
@@ -18,6 +19,7 @@
 {
     if (timerM) [timerM invalidate];
     [objectsM release];
+    [removeListM release];
 
     [super dealloc];
 }
@@ -26,6 +28,11 @@
 {
     [objectsM addObject: obj];
     return obj;
+}
+
+- (id) removeObject: (id <Agent>) obj
+{
+    [removeListM addObject: obj];
 }
 
 - (id) start
@@ -52,26 +59,56 @@
     [self start];
 }
 
+- (id) adjustTimer
+{
+    if ([objectsM count] == 0) {
+        if (tickIntervalM != 5.0f) {
+            tickIntervalM = 5.0f;
+            [self restart];
+        }
+    } else {
+        // we have objects, increase timer
+        if (tickIntervalM != 0.1f) {
+            tickIntervalM = 0.1f;
+            [self restart];
+        }
+    }
+}
+
 - (id) tick: (NSTimer *)timer
 {
     // calculate dt
     NSDate *now = [[NSDate alloc] init];
 
+    // spawn new ants?
+    // TODO
+
     if (lastTimeM) {
         NSTimeInterval timeDelta = [now timeIntervalSinceDate: lastTimeM];
         // loop thru our objects, tick them
         int cnt = [objectsM count];
+        NSLog(@"count: %d", cnt);
         int i;
         for(i = 0; i < cnt; i++) {
             id <Agent> object = [objectsM objectAtIndex: i];
             [object tickWithTimeDelta: timeDelta];
         }
+
+        // remove all the objects in our remove list
+        cnt = [removeListM count];
+        for(i = 0; i < cnt; i++) {
+            [objectsM removeObject: [removeListM objectAtIndex: i]];
+        }
+
+        [removeListM removeAllObjects];
         // done
 
         [lastTimeM release];
     }
 
     lastTimeM = now;
+
+    [self adjustTimer];
 }
 
 - (float) randomFloat

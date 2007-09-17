@@ -19,34 +19,29 @@ int springboard_pid();
 - (void) applicationDidFinishLaunching: (id) unused
 {
     worldM = [[World alloc] init];
-//    Ant *a = [[Ant alloc] initWithX: 0.0f Y: 0.0f world: worldM];
-    Ant *b = [[Ant alloc] initWithX: 150.0f Y: 240.0f world: worldM];
 
-    NSLog(@"adding objects");
-//    [worldM addObject: a];
-    [worldM addObject: b];
+    int i;
+    for(i = 0; i < 20; i++) {
+        [worldM addObject: [[Ant alloc] initWithX: 150.0f Y: 240.0f world: worldM]];
+    }
 
-    NSLog(@"starting world");
+    //NSLog(@"starting world");
     [worldM start];
 
-    NSLog(@"loaded");
-}
-
-- (void) statusBarMouseDown: (struct __GSEvent *) ev {
-    NSLog(@"Statusbar");
+    //NSLog(@"loaded");
 }
 
 - (void) applicationWillSuspend
 {
-    NSLog(@"willsuspend");
+    [worldM pause];
 }
 
 - (void) willSleep {
-	NSLog(@"willsleep");
+	[worldM pause];
 }
 
 - (void) didWake {
-	NSLog(@"didwake");
+	[worldM start];
 }
 
 @end
