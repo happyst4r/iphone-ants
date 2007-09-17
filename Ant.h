@@ -16,6 +16,8 @@
     id <Behavior> behaviorM;
     float travelCounterM;
     int currentSpriteM;
+    int stateM;
+    float deathCounterM;
 }
 
 - (id) initWithX: (float)x Y: (float) y world: (World *) w;
