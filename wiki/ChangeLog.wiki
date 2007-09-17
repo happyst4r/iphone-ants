@@ -1,7 +1,13 @@
+=== 1.0.2 (svn24) ===
+  * Fixed nasty startup bug.
+  * Fixed PXL package description & formatting.
+
 === 1.0.1 (svn19) ===
   * Fine-tuned upside-down sliding on glass movement and thresholds.
   * Got accelerometer to re-init once event callback was stolen by another app. Does not interfere with foreground app.
 
 === 1.0 (svn13) ===
   * Initial release
+ 
+ 
  
