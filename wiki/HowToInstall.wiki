@@ -7,6 +7,12 @@ I'll put it in AppTapp installer and PXL soon. For now, download the .tar.gz, tr
 # tar --no-same-owner -z -v -x -f /path/to/ants1.0.1.tar.gz
 }}}
 
+You can then launch ants from UIctl (available from Installer.app or PXL) or using launchctl commands:
+
+{{{
+# launchctl load -w /Library/LaunchDaemons/net.schine.ants.plist
+# launchctl unload -w /Library/LaunchDaemons/net.schine.ants.plist
+}}}
  
  
  
