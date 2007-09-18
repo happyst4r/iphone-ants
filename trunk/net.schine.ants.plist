@@ -10,7 +10,5 @@
 	<array>
 		<string>/usr/local/bin/ants</string>
 	</array>
-    <key>Disabled</key>
-    <true/>
 </dict>
 </plist>
