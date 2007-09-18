@@ -17,12 +17,8 @@ Download the latest .tar.gz, transfer it to your iPhone and execute:
 # tar --no-same-owner -z -v -x -f /path/to/ants<version>.tar.gz
 }}}
 
-You can then launch ants from UIctl (available from Installer.app or PXL) or using launchctl commands:
-
-{{{
-# launchctl load -w /Library/LaunchDaemons/net.schine.ants.plist
-# launchctl unload -w /Library/LaunchDaemons/net.schine.ants.plist
-}}}
+You can then use *Ants.app* (which should appear on your screen after re-launching SpringBoard) to disable/enable ants, and change other settings.
+ 
  
  
  
