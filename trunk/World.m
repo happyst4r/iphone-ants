@@ -1,9 +1,7 @@
 #import "World.h"
 #import "Ant.h"
 #import "Vector.h"
-
-#define SPAWN_NEW_ANTS_PROBABILITY 0.2f
-#define MAX_ANTS 4
+#import "Common.h"
 
 World *_world;
 void initialize(int);
@@ -34,6 +32,14 @@ void initialize(int);
 
     urandomM = fopen("/dev/urandom", "r");
 
+    // load stuff from defaults
+    defaultsM = [[NSDictionary alloc] initWithContentsOfFile: DEFAULTS_FILE];
+    maxAntsM = [[defaultsM valueForKey:@"maxAnts"] intValue];
+    if (maxAntsM < 1) maxAntsM = 4; // default
+    else maxAntsM /= (maxAntsM==1?1:2);
+
+    spawnNewAntsProbabilityM = 0.2f;
+
     return self;
 }
 
@@ -55,6 +61,7 @@ void initialize(int);
     if (timerM) [timerM invalidate];
     [objectsM release];
     [removeListM release];
+    [defaultsM release];
 
     [super dealloc];
 }
@@ -133,11 +140,11 @@ void initialize(int);
 
     // spawn new ants?
     int antCount = [objectsM count];
-    if (antCount < MAX_ANTS) {
+    if (antCount < maxAntsM) {
         float rand = [self randomFloat] / 2 + 0.5f;
-        if (rand < (SPAWN_NEW_ANTS_PROBABILITY * (antCount > 0?0.02f:1.0f))) {
+        if (rand < (spawnNewAntsProbabilityM * (antCount > 0?0.02f:1.0f))) {
             // how many?
-            int cnt = (int) (([self randomFloat] / 2 + 0.5f) * MAX_ANTS);
+            int cnt = (int) (([self randomFloat] / 2 + 0.5f) * maxAntsM);
             int i;
             for (i = 0; i < cnt; i++) {
                 CGPoint vel;

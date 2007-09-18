@@ -25,6 +25,10 @@
     float accelZ;
     int noAccelCountM;
     BOOL gotAccelM;
+
+    NSDictionary *defaultsM;
+    int maxAntsM;
+    float spawnNewAntsProbabilityM;
 }
 + (World *) singleton;
 - (id) addObject: (id <Agent>) obj;
