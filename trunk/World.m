@@ -2,7 +2,7 @@
 #import "Ant.h"
 #import "Vector.h"
 
-#define SPAWN_NEW_ANTS_PROBABILITY 0.4f
+#define SPAWN_NEW_ANTS_PROBABILITY 0.2f
 #define MAX_ANTS 4
 
 World *_world;
