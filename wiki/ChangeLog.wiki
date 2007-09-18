@@ -1,3 +1,7 @@
+=== 1.0.3 (svn28) ===
+  * Lowered max ant count for performance reasons.
+  * Lowered spawn probability so they're not so annoying :).
+
 === 1.0.2 (svn24) ===
   * Fixed nasty startup bug.
   * Fixed PXL package description & formatting.
@@ -8,6 +12,7 @@
 
 === 1.0 (svn13) ===
   * Initial release
+ 
  
  
  
