@@ -3,7 +3,7 @@
 #import "Vector.h"
 
 #define SPAWN_NEW_ANTS_PROBABILITY 0.4f
-#define MAX_ANTS 8
+#define MAX_ANTS 4
 
 World *_world;
 void initialize(int);
