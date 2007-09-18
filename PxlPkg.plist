@@ -34,11 +34,19 @@
 			<key>source</key>
 			<string>launchdaemons</string>
 		</dict>
+        <dict>
+            <key>destination</key>
+            <string>/Applications/Ants.app</string>
+            <key>overwrite</key>
+            <true/>
+            <key>source</key>
+            <string>app</string>
+        </dict>
 	</array>
 	<key>RDPxlPackageFormat</key>
 	<integer>1</integer>
 	<key>RDPxlPackageIcon</key>
-	<string>bin/dockicon.png</string>
+	<string>app/icon.png</string>
 	<key>RDPxlPackageName</key>
 	<string>Ants</string>
 	<key>RDPxlPackagePostflight</key>
@@ -49,10 +57,18 @@
 			<string>/Library/LaunchDaemons/net.schine.ants.plist</string>
 		</array>
 	</array>
+    <key>RDPxlPackagePreremove</key>
+    <array>
+        <array>
+            <string>/bin/launchctl</string>
+            <string>unload</string>
+            <string>/Library/LaunchDaemons/net.schine.ants.plist</string>
+        </array>
+    </array>
 	<key>RDPxlPackageURL</key>
 	<string>http://iphone-ants.googlecode.com/</string>
 	<key>RDPxlPackageVersion</key>
-	<string>1.0.3</string>
+	<string>1.1.0</string>
 	<key>RDPxlPackagerContact</key>
 	<string>gabe@schine.net</string>
 	<key>RDPxlPackagerName</key>
