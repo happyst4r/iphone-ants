@@ -1,3 +1,6 @@
+=== 1.1.1 (svn36) ===
+  * Added ability to enable/disable accelerometer usage due to [http://code.google.com/p/iphone-ants/issues/detail?id=2 this bug]. Default = off. 
+
 === 1.1.0 (svn31) ===
   * Added Ants.app: use to enable/disable ants, change max ants setting.
 
@@ -15,6 +18,7 @@
 
 === 1.0 (svn13) ===
   * Initial release
+ 
  
  
  
