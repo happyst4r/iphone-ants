@@ -25,6 +25,7 @@
     float accelZ;
     int noAccelCountM;
     BOOL gotAccelM;
+    BOOL accelEnabledM;
 
     NSDictionary *defaultsM;
     int maxAntsM;

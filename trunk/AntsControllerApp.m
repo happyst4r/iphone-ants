@@ -7,7 +7,6 @@
 
 @implementation AntsControllerApp
 
-
 - (void) applicationDidFinishLaunching: (id) unused
 {
     [self initDefaults];
@@ -33,6 +32,13 @@
     [enabledControl setAlternateColors:YES];
     [enabledControl setValue:[self isAntsRunning]];
     [enabledCellM setControl:enabledControl];
+
+    enableAccelCellM = [[UIPreferencesControlTableCell alloc] initWithFrame:CGRectMake(0.0f, 0.0f, rect.size.width, 48.0f)];
+    [enableAccelCellM setTitle:@"Accelerometer Use"];
+    UISwitchControl *enableAccelControl = [[[UISwitchControl alloc] initWithFrame: CGRectMake(rect.size.width - 114.0f, 11.0f, 114.0f, 48.0f)] autorelease];
+    [enableAccelControl setAlternateColors:YES];
+    [enableAccelControl setValue:([[defaultsM valueForKey:@"accelerometer"] intValue]==1)];
+    [enableAccelCellM setControl:enableAccelControl];
 
     // nav bar
     navBarM = [[[UINavigationBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, rect.size.width, 48.0f)] autorelease];
@@ -73,7 +79,7 @@
         case 0:
             return 1;
         case 1:
-            return 1;
+            return 2;
     }
 }
 
@@ -84,7 +90,14 @@
             // only one item
             return enabledCellM;
         case 1:
-            return maxAntsCellM;
+        {
+            switch (row) {
+                case 0:
+                    return enableAccelCellM;
+                case 1:
+                    return maxAntsCellM;
+            }
+        }
     }
 }
 
@@ -128,6 +141,10 @@
         [defaultsM setValue:newMaxAnts forKey:@"maxAnts"];
     }
 
+    BOOL accelEnabled = [[[enableAccelCellM control] valueForKey: @"value"] boolValue];
+    BOOL oldAccel = [[defaultsM valueForKey:@"accelerometer"] intValue] == 1;
+    [defaultsM setValue:(accelEnabled?@"1":@"0") forKey:@"accelerometer"];
+
     // save to file
     if (! [defaultsM writeToFile: DEFAULTS_FILE atomically: YES]) {
         NSLog(@"Could not write defaults");
@@ -139,7 +156,29 @@
         [self startAnts];
     }
 
-    // exit
+    if (accelEnabled && !oldAccel) {
+        // show alert saying there's a bug
+        [self showBugAlert];
+    } else {
+        // exit now
+        [self terminateWithSuccess];
+    }
+}
+
+- (void) showBugAlert
+{
+    UIAlertSheet *alert = [[UIAlertSheet alloc] initWithFrame:CGRectMake(0,0,320,480)];
+    [alert setTitle:@"Bug Notice"];
+    [alert setBodyText:@"Enabling accelerometer usage introduces a (harmless) bug: if your ringer is ON, the Ringer On icon will appear on screen at certain times."];
+    [alert addButtonWithTitle:@"OK"];
+    [alert setAlertSheetStyle:3];
+    [alert setDelegate: self];
+    [alert popupAlertAnimated: YES];
+}
+
+- (void) alertSheet:(UIAlertSheet *)alert buttonClicked:(int) button
+{
+    [alert dismissAnimated: YES];
     [self terminateWithSuccess];
 }
 

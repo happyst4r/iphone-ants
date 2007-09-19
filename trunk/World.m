@@ -24,8 +24,8 @@ void initialize(int);
         removeListM = [[NSMutableArray alloc] init];
     }
 
-    accelX = accelY = 0.5f; // neutral
-    accelZ = 0.0f;
+    accelX = accelY = 0.0f; // neutral
+    accelZ = -0.5f;
 
     noAccelCountM = 0;
     gotAccelM = NO;
@@ -35,6 +35,7 @@ void initialize(int);
     // load stuff from defaults
     defaultsM = [[NSDictionary alloc] initWithContentsOfFile: DEFAULTS_FILE];
     maxAntsM = [[defaultsM valueForKey:@"maxAnts"] intValue];
+    accelEnabledM = [[defaultsM valueForKey:@"accelerometer"] intValue] == 1;
     if (maxAntsM < 1) maxAntsM = 4; // default
     else maxAntsM /= (maxAntsM==1?1:2);
 
@@ -124,7 +125,7 @@ void initialize(int);
 
 - (id) tick: (NSTimer *)timer
 {
-    if (!gotAccelM) {
+    if (accelEnabledM && !gotAccelM) {
         noAccelCountM++;
         if (noAccelCountM > 6) {
             initialize(10);

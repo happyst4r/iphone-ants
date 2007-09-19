@@ -2,7 +2,7 @@ CC=arm-apple-darwin-gcc
 LD=$(CC) 
 LDFLAGS=-lobjc -framework CoreFoundation -framework Foundation -framework Celestial -framework UIKit -framework LayerKit -framework CoreGraphics -framework GraphicsServices -framework WebCore -framework IOKit
 
-VERSION=1.1.0
+VERSION=1.1.1
 
 default: all
 
@@ -42,6 +42,9 @@ archives: ants AntsControllerApp
 	zip -r Ants${VERSION}.zip usr Library Applications
 	tar -z -c -f ants${VERSION}.tar.gz usr Library Applications
 	rm -rf Library Applications usr
+
+accel_test: accel_test.o
+	$(LD) $(LDFLAGS) -v -o $@ $^
 
 ants: mainapp.o AntsApp.o Ant.o World.o Behaviors.o Vector.o
 	$(LD) $(LDFLAGS) -v -o $@ $^

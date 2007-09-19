@@ -25,6 +25,7 @@
     UIPreferencesTable *tableM;
     UIPreferencesTextTableCell *maxAntsCellM;
     UIPreferencesControlTableCell *enabledCellM;
+    UIPreferencesControlTableCell *enableAccelCellM;
 
     NSMutableDictionary *defaultsM;
 }
@@ -35,4 +36,5 @@
 - (BOOL) isAntsRunning;
 - (void) stopAnts;
 - (void) startAnts;
+- (void) showBugAlert;
 @end
