@@ -1,3 +1,8 @@
+=== 1.2.0 (svn44) ===
+  * Fixed bug where dead ants could be revived by shaking screen.
+  * Reverted debug spawn rate of 100% back to 20% default.
+  * Added spawn rate control in Ants.app
+
 === 1.1.2 (svn41) ===
   * Fixed bug where Dock or snap would not run when Ants was running (now Dock and snap need to work out their differences).
   * Added /usr/local/share/ants/bugs.plist in preparation for multiple types of bugs.
@@ -22,6 +27,7 @@
 
 === 1.0 (svn13) ===
   * Initial release
+ 
  
  
  
