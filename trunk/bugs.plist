@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bugs</key>
+	<array>
+		<dict>
+			<key>class</key>
+			<string>Ant</string>
+			<key>dimensions</key>
+			<dict>
+				<key>height</key>
+				<integer>25</integer>
+				<key>variance</key>
+				<integer>10</integer>
+				<key>width</key>
+				<integer>16</integer>
+			</dict>
+			<key>distanceBetweenSpriteChanges</key>
+			<integer>4</integer>
+			<key>name</key>
+			<string>Wood Ant</string>
+			<key>spawnWeight</key>
+			<integer>1</integer>
+			<key>spriteGroups</key>
+			<dict>
+				<key>dead</key>
+				<array>
+					<string>/usr/local/share/ants/ant_dead.png</string>
+				</array>
+				<key>normal</key>
+				<array>
+					<string>/usr/local/share/ants/ant1.png</string>
+					<string>/usr/local/share/ants/ant2.png</string>
+					<string>/usr/local/share/ants/ant3.png</string>
+				</array>
+			</dict>
+			<key>states</key>
+			<array>
+				<dict>
+					<key>maxAcceleration</key>
+					<integer>500</integer>
+					<key>maxAccelerationVariance</key>
+					<integer>0</integer>
+					<key>maxVelocity</key>
+					<integer>30</integer>
+					<key>maxVelocityVariance</key>
+					<integer>8</integer>
+					<key>spritesBasedOnDistance</key>
+					<true/>
+					<key>useSpriteGroup</key>
+					<string>normal</string>
+				</dict>
+				<dict>
+					<key>maxAcceleration</key>
+					<string>800</string>
+					<key>maxVelocity</key>
+					<string>200</string>
+					<key>useSpriteGroup</key>
+					<string>normal</string>
+				</dict>
+				<dict>
+					<key>useSpriteGroup</key>
+					<string>dead</string>
+				</dict>
+			</array>
+		</dict>
+	</array>
+	<key>version</key>
+	<integer>1</integer>
+</dict>
+</plist>

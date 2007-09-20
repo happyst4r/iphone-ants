@@ -24,6 +24,8 @@ void initialize(int);
         removeListM = [[NSMutableArray alloc] init];
     }
 
+    bugsM = [[NSDictionary alloc] initWithContentsOfFile: BUGS_FILE];
+
     accelX = accelY = 0.0f; // neutral
     accelZ = -0.5f;
 
@@ -34,12 +36,24 @@ void initialize(int);
 
     // load stuff from defaults
     defaultsM = [[NSDictionary alloc] initWithContentsOfFile: DEFAULTS_FILE];
-    maxAntsM = [[defaultsM valueForKey:@"maxAnts"] intValue];
+    maxBugsM = [[defaultsM valueForKey:@"maxAnts"] intValue];
     accelEnabledM = [[defaultsM valueForKey:@"accelerometer"] intValue] == 1;
-    if (maxAntsM < 1) maxAntsM = 4; // default
-    else maxAntsM /= (maxAntsM==1?1:2);
+    if (maxBugsM < 1) maxBugsM = 4; // default
+    else maxBugsM /= (maxBugsM==1?1:2);
 
-    spawnNewAntsProbabilityM = 0.2f;
+    // init bug types and stuff
+    NSArray *bugTypes = [bugsM objectForKey:@"bugs"];
+    int totalWeight = 0;
+    int numBugTypes = [bugTypes count];
+    int i;
+    for(i = 0, totalSpawnWeightM = 0; i < numBugTypes; i++) {
+        int spawnWeight = [[[bugTypes objectAtIndex: i] valueForKey:@"spawnWeight"] intValue];
+        if (spawnWeight == 0) spawnWeight = 1;
+        totalSpawnWeightM += spawnWeight;
+    }
+    bugTypesM = numBugTypes;
+
+    spawnNewBugsProbabilityM = 0.2f;
 
     return self;
 }
@@ -127,7 +141,7 @@ void initialize(int);
 {
     if (accelEnabledM && !gotAccelM) {
         noAccelCountM++;
-        if (noAccelCountM > 6) {
+        if (noAccelCountM > 15) {
             initialize(10);
             noAccelCountM = 0;
         }
@@ -139,31 +153,44 @@ void initialize(int);
     // calculate dt
     NSDate *now = [[NSDate alloc] init];
 
-    // spawn new ants?
-    int antCount = [objectsM count];
-    if (antCount < maxAntsM) {
+    // spawn new bugs?
+    int bugCount = [objectsM count];
+    if (bugCount < maxBugsM) {
         float rand = [self randomFloat] / 2 + 0.5f;
-        if (rand < (spawnNewAntsProbabilityM * (antCount > 0?0.02f:1.0f))) {
+        if (YES || rand < (spawnNewBugsProbabilityM * (bugCount > 0?0.02f:1.0f))) {
             // how many?
-            int cnt = (int) (([self randomFloat] / 2 + 0.5f) * maxAntsM);
+            float randFloat = [self randomFloat] / 2 + 0.5f;
+            int cnt = (int) (randFloat * randFloat * maxBugsM);
+            //NSLog(@"spawning %d bugs out of %d types", cnt, bugTypesM);
             int i;
             for (i = 0; i < cnt; i++) {
-                CGPoint vel;
-                CGPoint pos;
-                CGPoint center;
+                NSDictionary *bugDescription;
+                // need to find the type
+                int typeRand = (int) ([self randomFloat] * (float) totalSpawnWeightM);
+                int j, runningCount;
+                for (j = 0, runningCount = 0; j < bugTypesM; j++) {
+                    NSDictionary *maybeBug = [[bugsM objectForKey:@"bugs"] objectAtIndex: j];
+                    runningCount += [[maybeBug valueForKey: @"spawnWeight"] intValue];
+                    if (runningCount > typeRand) {
+                        // this is our bug!
+                        bugDescription = maybeBug;
+                    }
+                }
+
+                CGPoint vel, pos, center;
                 center.x = 160.0f;
                 center.y = 240.0f;
                 // random position outside our screen
-                pos.x = ([self randomFloat] - 1.0f) * 15.0f + ([self randomFloat]>0.0f?360.0f:0.0f);
+                pos.x = ([self randomFloat] - 1.0f) * 15.0f + ([self randomFloat]>0.0f?360.0f:-10.0f);
                 if (pos.x > 350.0f) pos.x = 350.0f;
                 pos.y = ([self randomFloat] + 1.0f) * 260.0f - 20.0f;
                 //pos.y = ([self randomFloat] - 1.0f) * 15.0f + ([self randomFloat]>0.0f?520.0f:0.0f);
                 //if (pos.y > 510.0f) pos.y = 510.0f;
                 vel = [Vector subtract: pos from: center];
                 //NSLog(@"spawn at: (%f,%f) vel: (%f,%f)", pos.x, pos.y, vel.x, vel.y);
-                Ant *ant = [[Ant alloc] initWithPosition: pos velocity: vel world: self];
-                [ant setBehavior: [[[WanderBehavior alloc] init] autorelease]];
-                [self addObject: ant];
+                Class bugClass = NSClassFromString([bugDescription objectForKey:@"class"]);
+                id bug = [[bugClass alloc] initWithPosition: pos velocity: vel description: bugDescription world: self];
+                [self addObject: bug];
             }
         }
     }
@@ -206,16 +233,10 @@ void initialize(int);
 
 - (id) registerTapAt: (CGPoint) pos
 {
-    //NSLog(@"Tap at %f, %f", pos.x, pos.y);
-    // anybody nearby?
     int i, cnt = [objectsM count];
     for(i = 0; i < cnt; i++) {
         NSObject <Agent> *agent = [objectsM objectAtIndex: i];
-        CGPoint diffVector = [Vector subtract: [agent position] from: pos];
-        if ([Vector lengthSquared: diffVector] < 10000.0f) {
-            [agent setBehavior: [[[FleeBehavior alloc] initWithPoint: pos] autorelease]];
-            [agent setMaxVelocity: 60.0f];
-        }
+        [agent registerTapAt: (CGPoint) pos];
     }
 }
 

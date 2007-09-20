@@ -7,9 +7,9 @@
 - (id) tickWithTimeDelta: (NSTimeInterval) timeDelta;
 - (CGPoint) position;
 - (CGPoint) velocity;
+- (id) registerTapAt: (CGPoint) pos;
 - (id) removeFromWorld;
 - (id) setBehavior: (NSObject <Behavior> *) behavior;
-- (id) setMaxVelocity: (float) v;
 @end
 
 @interface World : NSObject
@@ -28,8 +28,11 @@
     BOOL accelEnabledM;
 
     NSDictionary *defaultsM;
-    int maxAntsM;
-    float spawnNewAntsProbabilityM;
+    NSDictionary *bugsM;
+    int maxBugsM;
+    int bugTypesM;
+    float spawnNewBugsProbabilityM;
+    int totalSpawnWeightM;
 }
 + (World *) singleton;
 - (id) addObject: (id <Agent>) obj;

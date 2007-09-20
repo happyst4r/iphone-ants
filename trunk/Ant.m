@@ -13,81 +13,44 @@ enum {
     kAntDead
 };
 
-@interface AntSprites : NSObject
-{
-    NSMutableArray *spritesM;
-    UIImage *deadAntImageM;
-}
-+ (AntSprites *) singleton;
-- (UIImage *) spriteAtIndex: (int) i;
-- (UIImage *) deadAntSprite;
-@end
-
-AntSprites *_antSprites;
-
-@implementation AntSprites
-+ (AntSprites *) singleton
-{
-    if (!_antSprites) {
-        _antSprites = [[AntSprites alloc] init];
-    }
-    return _antSprites;
-}
-
-- (id) init
-{
-    [super init];
-
-    spritesM = [[NSMutableArray alloc] initWithCapacity: NUM_SPRITES];
-    int i;
-    for(i = 0; i < NUM_SPRITES; i++) {
-        NSString *path = [NSString stringWithFormat:@"/usr/local/share/ants/ant%d.png", i+1];
-        //NSLog(@"Adding image: %@", path);
-        UIImage *img = [[UIImage alloc] initWithContentsOfFile: path];
-        [spritesM addObject: img];
-    }
-
-    deadAntImageM = [[UIImage alloc] initWithContentsOfFile: @"/usr/local/share/ants/ant_dead.png"];
-
-    return self;
-}
-
-- (UIImage *) deadAntSprite
-{
-    return deadAntImageM;
-}
-
-- (UIImage *) spriteAtIndex: (int) i
-{
-    return [spritesM objectAtIndex: i];
-}
-@end
-
 @implementation Ant
-- (id) initWithPosition: (CGPoint) pos velocity: (CGPoint) vel world: (World *) w
+- (id) initWithPosition: (CGPoint) pos velocity: (CGPoint) vel description: (NSDictionary *)desc world: (World *) w
 {
     [super init];
     travelCounterM = 0.0f;
     currentSpriteM = 0;
     posM = pos;
     worldM = w;
+    descriptionM = desc;
     stateM = kAntAlive;
-    maxVelocityM = 30.0f;
+
+    velocityVarianceFloatM = [w randomFloat];
+    accelerationVarianceFloatM = [w randomFloat];
+    [self updateLimitsForState];
+
     deathCounterM = 0.0f;
+
     velM = [Vector truncate: vel to: maxVelocityM];
 
-    struct CGRect rect = CGRectMake(0.0f, 0.0f, 16.0f, 25.0f);
+    NSDictionary *dim = [descriptionM objectForKey: @"dimensions"];
+    float var = [[dim objectForKey: @"variance"] floatValue] / 100.0f * [worldM randomFloat];
+    widthM = [[dim objectForKey:@"width"] floatValue];
+    heightM = [[dim objectForKey:@"height"] floatValue];
+    widthM += widthM*var;
+    heightM += heightM*var;
+    struct CGRect rect = CGRectMake(0.0f, 0.0f, widthM , heightM);
+    scaleM = var>1.0f?var:1-var;
     
     [super initWithContentRect: rect];
     [super orderFront: self];
 
-    viewM = [[UIImageView alloc] initWithImage: [[AntSprites singleton] spriteAtIndex: 0]];
+    viewM = [[UIImageView alloc] init];
+    spritesM = [Sprites spritesWithDescription: descriptionM];
+    [self setBehavior: [[[WanderBehavior alloc] init] autorelease]];
 
     [super setContentView: viewM];
 
     [self reposition];
-
-    //NSLog(@"yay - ants!");
 
     return self;
 }
@@ -108,10 +71,40 @@ AntSprites *_antSprites;
     return velM;
 }
 
+- (id) registerTapAt: (CGPoint) pos
+{
+    CGPoint diffVector = [Vector subtract: [self position] from: pos];
+    if ([Vector lengthSquared: diffVector] < 10000.0f) {
+        [self setBehavior: [[[FleeBehavior alloc] initWithPoint: pos] autorelease]];
+        maxVelocityM *= 2;
+    }
+}
+
+- (id) updateLimitsForState
+{
+    if (stateM >= [[descriptionM objectForKey:@"states"] count]) {
+        maxVelocityM = maxAccelerationM = 0;
+        return;
+    }
+
+    NSDictionary *d = [[descriptionM objectForKey:@"states"] objectAtIndex: stateM];
+
+    float maxVelocityVariance = [[d objectForKey:@"maxVelocityVariance"] floatValue] * velocityVarianceFloatM;
+    maxVelocityM = [[d objectForKey:@"maxVelocity"] intValue] + maxVelocityVariance; 
+
+    float maxAccelerationVariance = [[d objectForKey:@"maxAccelerationVariance"] floatValue] * accelerationVarianceFloatM;
+    maxAccelerationM = [[d objectForKey:@"maxAcceleration"] intValue] + maxAccelerationVariance; 
+
+    //NSLog(@"new ant: %f, %f", maxVelocityM, maxAccelerationM);
+}
+
 - (id) reposition
 {
+    [self updateSprite];
     [super setTransform: CGAffineTransformMakeTranslation(posM.x, posM.y)];
-    [viewM setTransform: CGAffineTransformMakeRotation([self getRotation])];
+    [viewM setTransform:
+        CGAffineTransformScale(
+            CGAffineTransformMakeRotation([self getRotation]), scaleM, scaleM)];
 }
 
 - (float) getRotation
@@ -120,8 +113,6 @@ AntSprites *_antSprites;
     float baseAngle = atan(velM.y/velM.x);
 
     while(baseAngle < 0) baseAngle += 2*M_PI;
-
-    //NSLog(@"angle: %f", baseAngle/M_PI*180);
 
     return baseAngle + M_PI/2 + (velM.x < 0?M_PI:0);
 }
@@ -140,15 +131,27 @@ AntSprites *_antSprites;
     posM.y += y;
 
     travelCounterM += (x*x + y*y);
-    if (travelCounterM > 9.0f) {
-        travelCounterM = 0.0f;
-        currentSpriteM = (currentSpriteM + 1) % NUM_SPRITES;
-        [viewM setTransform: CGAffineTransformIdentity];
-        [viewM setImage: [[AntSprites singleton] spriteAtIndex: currentSpriteM]];
-    }
 
     [self reposition];
 }
+
+- (id) updateSprite
+{
+    if ([spritesM spritesBasedOnDistanceForState: stateM]) {
+        int distance = [[descriptionM objectForKey:@"distanceBetweenSpriteChanges"] intValue];
+        if (travelCounterM > distance * distance) {
+            travelCounterM = 0.0f;
+            currentSpriteM++;
+        }
+    } else {
+        currentSpriteM++;
+    }
+
+    currentSpriteM = currentSpriteM % [spritesM numberOfSpritesForState: stateM];
+    [viewM setTransform: CGAffineTransformIdentity];
+    [viewM setImage: [spritesM spriteAtIndex: currentSpriteM forState: stateM]];
+}
+
 
 - (BOOL) ignoresMouseEvents
 {
@@ -158,9 +161,9 @@ AntSprites *_antSprites;
 - (id) mouseDown: (void *) event
 {
     stateM = kAntDead;
+    [self updateLimitsForState];
     //NSLog(@"ANT JUST GOT KILLED YO!");
     [viewM setTransform: CGAffineTransformIdentity];
-    [viewM setImage: [[AntSprites singleton] deadAntSprite]];
     [self reposition]; // re-rotate and such
     // tell the world we just got tapped
     [worldM registerTapAt: posM];
@@ -190,6 +193,7 @@ AntSprites *_antSprites;
             // ok, now we have a chance of re-attaching
             if (z < -0.40f || ([worldM randomFloat] / 2 + 0.5) < 0.4f * timeDelta) {
                 stateM = kAntAlive;
+                [self updateLimitsForState];
                 fallingVelM.x = fallingVelM.y = 0.0f;
             }
         } 
@@ -220,9 +224,6 @@ AntSprites *_antSprites;
         }
         
         // flail!
-        currentSpriteM = (currentSpriteM + 1) % NUM_SPRITES;
-        [viewM setTransform: CGAffineTransformIdentity];
-        [viewM setImage: [[AntSprites singleton] spriteAtIndex: currentSpriteM]];
         [self reposition];
     } else {
         // now are we going to let go?
@@ -233,6 +234,7 @@ AntSprites *_antSprites;
             if ([worldM randomFloat] / 2 + 0.5f < max*max) {
                 // yup
                 stateM = kAntFalling;
+                [self updateLimitsForState];
                 fallingVelM = velM; // preservation of motion
             }
         }
@@ -244,7 +246,7 @@ AntSprites *_antSprites;
     if (behaviorM) {
         accel = [behaviorM getAccelerationVectorForAgent: self world: worldM];
         //NSLog(@"accel virgin: %f, %f", accel.x, accel.y);
-        accel = [Vector multiply: [Vector truncate: accel to: MAX_ACCEL] by: timeDelta];
+        accel = [Vector multiply: [Vector truncate: accel to: maxAccelerationM] by: timeDelta];
         //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
         velM = [Vector truncate: [Vector add: accel to: velM] to: maxVelocityM];
     }

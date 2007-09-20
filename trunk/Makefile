@@ -2,7 +2,7 @@ CC=arm-apple-darwin-gcc
 LD=$(CC) 
 LDFLAGS=-lobjc -framework CoreFoundation -framework Foundation -framework Celestial -framework UIKit -framework LayerKit -framework CoreGraphics -framework GraphicsServices -framework WebCore -framework IOKit
 
-VERSION=1.1.2
+VERSION=1.1.3
 
 default: all
 
@@ -14,6 +14,11 @@ AntsControllerApp: AntsController
 	cp AntsController Default.png Info.plist Ants.app
 	cp AntsIcon.png Ants.app/icon.png
 
+dist: version pxl archives
+
+version:
+	bash new_version.sh
+
 pxl: ants AntsControllerApp
 	mkdir bin
 	mkdir share
@@ -21,7 +26,7 @@ pxl: ants AntsControllerApp
 	cp -r Ants.app app
 	cp ants bin
 	cp DaemonInfo.plist bin/Info.plist
-	cp ant_sprites/*.png share
+	cp ant_sprites/*.png bugs.plist share
 	cp net.schine.ants.plist launchdaemons
 	rm -f Ants${VERSION}.pxl 
 	zip -r Ants${VERSION}.pxl PxlPkg.plist bin share launchdaemons app
@@ -37,7 +42,7 @@ archives: ants AntsControllerApp
 	cp ants usr/local/bin/ants_daemon
 	cp DaemonInfo.plist usr/local/bin/ants_daemon/Info.plist
 	cp net.schine.ants.plist Library/LaunchDaemons/
-	cp ant_sprites/*.png usr/local/share/ants/
+	cp ant_sprites/*.png bugs.plist usr/local/share/ants/
 	rm -f Ants${VERSION}.zip
 	rm -f ants${VERSION}.tar.gz
 	zip -r Ants${VERSION}.zip usr Library Applications
@@ -47,7 +52,7 @@ archives: ants AntsControllerApp
 accel_test: accel_test.o
 	$(LD) $(LDFLAGS) -v -o $@ $^
 
-ants: mainapp.o AntsApp.o Ant.o World.o Behaviors.o Vector.o
+ants: mainapp.o AntsApp.o Ant.o World.o Behaviors.o Vector.o Sprites.o
 	$(LD) $(LDFLAGS) -v -o $@ $^
 
 AntsController: mainController.o AntsControllerApp.o
