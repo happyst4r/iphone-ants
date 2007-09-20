@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>net.schine.ants</string>
+	<key>RDPxlPackageDesc</key>
+	<string>A "game" where ants crawl around on your screen. You can squish them, shake the screen to make them fall off or slide on the glass (try upside down!). They react to you. Have fun.</string>
+	<key>RDPxlPackageFiles</key>
+	<array>
+		<dict>
+			<key>destination</key>
+			<string>/usr/local/bin/ants_daemon</string>
+			<key>executable</key>
+			<true/>
+			<key>overwrite</key>
+			<true/>
+			<key>source</key>
+			<string>bin</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<string>/usr/local/share/ants</string>
+			<key>overwrite</key>
+			<true/>
+			<key>source</key>
+			<string>share</string>
+		</dict>
+		<dict>
+			<key>destination</key>
+			<string>/Library/LaunchDaemons</string>
+			<key>overwrite</key>
+			<true/>
+			<key>source</key>
+			<string>launchdaemons</string>
+		</dict>
+        <dict>
+            <key>destination</key>
+            <string>/Applications/Ants.app</string>
+            <key>overwrite</key>
+            <true/>
+            <key>source</key>
+            <string>app</string>
+        </dict>
+	</array>
+	<key>RDPxlPackageFormat</key>
+	<integer>1</integer>
+	<key>RDPxlPackageIcon</key>
+	<string>app/icon.png</string>
+	<key>RDPxlPackageName</key>
+	<string>Ants</string>
+	<key>RDPxlPackagePostflight</key>
+	<array>
+		<array>
+			<string>/bin/launchctl</string>
+			<string>load</string>
+			<string>/Library/LaunchDaemons/net.schine.ants.plist</string>
+		</array>
+	</array>
+    <key>RDPxlPackagePreremove</key>
+    <array>
+        <array>
+            <string>/bin/launchctl</string>
+            <string>unload</string>
+            <string>/Library/LaunchDaemons/net.schine.ants.plist</string>
+        </array>
+    </array>
+	<key>RDPxlPackageURL</key>
+	<string>http://iphone-ants.googlecode.com/</string>
+	<key>RDPxlPackageVersion</key>
+	<string>##VERSION##</string>
+	<key>RDPxlPackagerContact</key>
+	<string>gabe@schine.net</string>
+	<key>RDPxlPackagerName</key>
+	<string>tzun</string>
+</dict>
+</plist>
