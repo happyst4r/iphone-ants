@@ -10,7 +10,7 @@
 	<array>
 		<dict>
 			<key>destination</key>
-			<string>/usr/local/bin</string>
+			<string>/usr/local/bin/ants_daemon</string>
 			<key>executable</key>
 			<true/>
 			<key>overwrite</key>

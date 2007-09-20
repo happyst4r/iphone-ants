@@ -6,7 +6,6 @@ VERSION=1.1.1
 
 default: all
 
-#all: dock pxl iapp
 all: ants AntsControllerApp
 
 AntsControllerApp: AntsController
@@ -21,6 +20,7 @@ pxl: ants AntsControllerApp
 	mkdir launchdaemons
 	cp -r Ants.app app
 	cp ants bin
+	cp DaemonInfo.plist bin/Info.plist
 	cp ant_sprites/*.png share
 	cp net.schine.ants.plist launchdaemons
 	rm -f Ants${VERSION}.pxl 
@@ -29,12 +29,13 @@ pxl: ants AntsControllerApp
 
 
 archives: ants AntsControllerApp
-	mkdir -p usr/local/bin
+	mkdir -p usr/local/bin/ants_daemon
 	mkdir -p usr/local/share/ants
 	mkdir -p Library/LaunchDaemons
 	mkdir -p Applications
 	cp -r Ants.app Applications
-	cp ants usr/local/bin/
+	cp ants usr/local/bin/ants_daemon
+	cp DaemonInfo.plist usr/local/bin/ants_daemon/Info.plist
 	cp net.schine.ants.plist Library/LaunchDaemons/
 	cp ant_sprites/*.png usr/local/share/ants/
 	rm -f Ants${VERSION}.zip
@@ -56,4 +57,7 @@ AntsController: mainController.o AntsControllerApp.o
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 clean:
-	rm -f *.o ants 
+	rm -rf *.o ants Ants.app
+
+distclean: clean
+	rm -f *.pxl *.zip *.gz
