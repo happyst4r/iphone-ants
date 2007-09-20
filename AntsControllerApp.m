@@ -40,6 +40,17 @@
     [enableAccelControl setValue:([[defaultsM valueForKey:@"accelerometer"] intValue]==1)];
     [enableAccelCellM setControl:enableAccelControl];
 
+    spawnRateCellM = [[UIPreferencesControlTableCell alloc] initWithFrame:CGRectMake(0.0f, 0.0f, rect.size.width, 48.0f)];
+    [spawnRateCellM setTitle:@"Spawn Rate"];
+    UISliderControl *spawnRateControl = [[[UISliderControl alloc] initWithFrame: CGRectMake(rect.size.width - 185.0f, 2.0f, 170.0f, 44.0f)] autorelease];
+    [spawnRateControl setContinuous: YES];
+    [spawnRateControl setMinValue: 0.0f];
+    [spawnRateControl setMaxValue: 1.0f];
+    NSNumber *spawnRate = [defaultsM valueForKey:@"spawnRate"];
+    float spawnRateF = spawnRate?[spawnRate floatValue]/100:0.2f;
+    [spawnRateControl setValue: spawnRateF];
+    [spawnRateCellM setControl:spawnRateControl];
+
     // nav bar
     navBarM = [[[UINavigationBar alloc] initWithFrame:CGRectMake(0.0f, 0.0f, rect.size.width, 48.0f)] autorelease];
     [navBarM showLeftButton:@"About" withStyle:0 rightButton:@"Done" withStyle:3];
@@ -79,7 +90,7 @@
         case 0:
             return 1;
         case 1:
-            return 2;
+            return 3;
     }
 }
 
@@ -96,6 +107,8 @@
                     return enableAccelCellM;
                 case 1:
                     return maxAntsCellM;
+                case 2:
+                    return spawnRateCellM;
             }
         }
     }
@@ -144,6 +157,9 @@
     BOOL accelEnabled = [[[enableAccelCellM control] valueForKey: @"value"] boolValue];
     BOOL oldAccel = [[defaultsM valueForKey:@"accelerometer"] intValue] == 1;
     [defaultsM setValue:(accelEnabled?@"1":@"0") forKey:@"accelerometer"];
+    UISliderControl *spawnRateControl = [spawnRateCellM control];
+    float spawnRate = [spawnRateControl value];
+    [defaultsM setValue: [NSString stringWithFormat: @"%d", (int) (spawnRate * 100.0f)] forKey:@"spawnRate"];
 
     // save to file
     if (! [defaultsM writeToFile: DEFAULTS_FILE atomically: YES]) {

@@ -26,6 +26,7 @@
     UIPreferencesTextTableCell *maxAntsCellM;
     UIPreferencesControlTableCell *enabledCellM;
     UIPreferencesControlTableCell *enableAccelCellM;
+    UIPreferencesControlTableCell *spawnRateCellM;
 
     NSMutableDictionary *defaultsM;
 }

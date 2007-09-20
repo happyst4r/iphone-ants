@@ -184,58 +184,61 @@ enum {
     float y = [worldM accelY];
     float z = [worldM accelZ];
 
-    // do we need to react to the accelerometer?
-    if (stateM == kAntFalling) {
-        // we're faaaalllllliinnnngggg. fun
+    // if not dead...
+    if (stateM != kAntDead) {
+        // do we need to react to the accelerometer? 
+        if (stateM == kAntFalling) {
+            // we're faaaalllllliinnnngggg. fun
 
-        // are we going to get back on our feet?
-        if (abs(x) < 0.25f && abs(y) < 0.25f && z < -0.25f) {
-            // ok, now we have a chance of re-attaching
-            if (z < -0.40f || ([worldM randomFloat] / 2 + 0.5) < 0.4f * timeDelta) {
-                stateM = kAntAlive;
-                [self updateLimitsForState];
-                fallingVelM.x = fallingVelM.y = 0.0f;
+            // are we going to get back on our feet?
+            if (abs(x) < 0.25f && abs(y) < 0.25f && z < -0.25f) {
+                // ok, now we have a chance of re-attaching
+                if (z < -0.40f || ([worldM randomFloat] / 2 + 0.5) < 0.4f * timeDelta) {
+                    stateM = kAntAlive;
+                    [self updateLimitsForState];
+                    fallingVelM.x = fallingVelM.y = 0.0f;
+                }
+            } 
+            
+            if (z < 0.42) {
+                // ok keep falling
+                // but are we upside down?
+                CGPoint accel = [Vector
+                    multiply: [Vector makeWithX: -x Y: -y] // down
+                    by: 400.0f];
+
+                // are we stuck?
+                // subtract friction from the screen
+                if (z > 0.0f) {
+                    accel = [Vector multiply: [Vector subtract: fallingVelM from: accel] by: z*2];
+                }
+
+                // compute new vel and apply
+                accel = [Vector multiply: accel by: timeDelta];
+                //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
+                fallingVelM = [Vector truncate: [Vector add: accel to: fallingVelM] to: 200.0f];
+
+                CGPoint posDelta = [Vector multiply: fallingVelM by: timeDelta];
+
+                [self moveByX: posDelta.x Y: posDelta.y];
+            } else {
+                fallingVelM.x = fallingVelM.y = 0;
             }
-        } 
-        
-        if (z < 0.42) {
-            // ok keep falling
-            // but are we upside down?
-            CGPoint accel = [Vector
-                multiply: [Vector makeWithX: -x Y: -y] // down
-                by: 400.0f];
-
-            // are we stuck?
-            // subtract friction from the screen
-            if (z > 0.0f) {
-                accel = [Vector multiply: [Vector subtract: fallingVelM from: accel] by: z*2];
-            }
-
-            // compute new vel and apply
-            accel = [Vector multiply: accel by: timeDelta];
-            //NSLog(@"accel trunc: %f, %f", accel.x, accel.y);
-            fallingVelM = [Vector truncate: [Vector add: accel to: fallingVelM] to: 200.0f];
-
-            CGPoint posDelta = [Vector multiply: fallingVelM by: timeDelta];
-
-            [self moveByX: posDelta.x Y: posDelta.y];
+            
+            // flail!
+            [self reposition];
         } else {
-            fallingVelM.x = fallingVelM.y = 0;
-        }
-        
-        // flail!
-        [self reposition];
-    } else {
-        // now are we going to let go?
-        float ax = abs(x), ay = abs(y);
-        if (ax > 0.35 || ay > 0.35) {
-            float max = ax>ay?ax:ay;
+            // now are we going to let go?
+            float ax = abs(x), ay = abs(y);
+            if (ax > 0.35 || ay > 0.35) {
+                float max = ax>ay?ax:ay;
 
-            if ([worldM randomFloat] / 2 + 0.5f < max*max) {
-                // yup
-                stateM = kAntFalling;
-                [self updateLimitsForState];
-                fallingVelM = velM; // preservation of motion
+                if ([worldM randomFloat] / 2 + 0.5f < max*max) {
+                    // yup
+                    stateM = kAntFalling;
+                    [self updateLimitsForState];
+                    fallingVelM = velM; // preservation of motion
+                }
             }
         }
     }
