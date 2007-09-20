@@ -1,4 +1,4 @@
-=== 1.2.0 (svn44) ===
+=== 1.2.0 (svn46) ===
   * Fixed bug where dead ants could be revived by shaking screen.
   * Reverted debug spawn rate of 100% back to 20% default.
   * Added spawn rate control in Ants.app
@@ -27,6 +27,7 @@
 
 === 1.0 (svn13) ===
   * Initial release
+ 
  
  
  
