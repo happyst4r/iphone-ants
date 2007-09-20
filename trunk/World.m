@@ -54,6 +54,10 @@ void initialize(int);
     bugTypesM = numBugTypes;
 
     spawnNewBugsProbabilityM = 0.2f;
+    NSNumber *spawnProbObject = [defaultsM valueForKey:@"spawnRate"];
+    if (spawnProbObject) spawnNewBugsProbabilityM = [spawnProbObject floatValue] / 100;
+    if (spawnNewBugsProbabilityM < 0.0f) spawnNewBugsProbabilityM = 0.0f;
+    if (spawnNewBugsProbabilityM > 1.0f) spawnNewBugsProbabilityM = 1.0f;
 
     return self;
 }
@@ -157,7 +161,7 @@ void initialize(int);
     int bugCount = [objectsM count];
     if (bugCount < maxBugsM) {
         float rand = [self randomFloat] / 2 + 0.5f;
-        if (YES || rand < (spawnNewBugsProbabilityM * (bugCount > 0?0.02f:1.0f))) {
+        if (rand < (spawnNewBugsProbabilityM * (bugCount > 0?0.02f:1.0f))) {
             // how many?
             float randFloat = [self randomFloat] / 2 + 0.5f;
             int cnt = (int) (randFloat * randFloat * maxBugsM);
