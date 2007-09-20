@@ -1,3 +1,7 @@
+=== 1.1.2 (svn41) ===
+  * Fixed bug where Dock or snap would not run when Ants was running (now Dock and snap need to work out their differences).
+  * Added /usr/local/share/ants/bugs.plist in preparation for multiple types of bugs.
+
 === 1.1.1 (svn36) ===
   * Added ability to enable/disable accelerometer usage due to [http://code.google.com/p/iphone-ants/issues/detail?id=2 this bug]. Default = off. 
 
@@ -18,6 +22,7 @@
 
 === 1.0 (svn13) ===
   * Initial release
+ 
  
  
  
